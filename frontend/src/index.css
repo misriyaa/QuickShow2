@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@keyframes custom-pulse-ring {
+  0% { transform: scale(0.33); }
+  80%, 100% { opacity: 0; }
+}
+
+@keyframes urgent-shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+}
+
+.animate-urgent-shake {
+  animation: urgent-shake 0.5s cubic-bezier(.36,.07,.19,.97) infinite;
+}
+.no-scrollbar{
+  scrollbar-width:none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+}
+
+::-webkit-calender-picker-indicator{
+  filter:invert(1)
+}
