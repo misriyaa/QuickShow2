@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { assets } from '../../assets/assets'
 import { 
   LayoutDashboardIcon, 
+  ListCheckIcon, 
   ListCollapseIcon, 
   ListIcon, 
   PlusSquareIcon 
@@ -20,6 +21,7 @@ const Sidebar = () => {
         /* 'end: true' ensures the dashboard doesn't stay highlighted when you are on sub-routes */
         { name: 'Dashboard', path: '/admin', icon: LayoutDashboardIcon, end: true },
         { name: 'Add Shows', path: '/admin/add-shows', icon: PlusSquareIcon },
+        { name: 'Add Movie', path: '/admin/add-movies', icon: ListCheckIcon },
         { name: 'List Shows', path: '/admin/list-shows', icon: ListIcon },
         { name: 'List Bookings', path: '/admin/list-bookings', icon: ListCollapseIcon },
     ]

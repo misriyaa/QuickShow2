@@ -1,54 +1,84 @@
-import React from 'react';
-// Import the image from the path shown in your screenshot
-import heroBg from '../assets/backgroundImage.png'; 
-import { assets } from '../assets/assets';
-import { CalendarIcon, ClockIcon, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { ArrowRight, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
-  const navigate=useNavigate()
+  const navigate = useNavigate();
+  const [latestMovie, setLatestMovie] = useState(null);
+
+  useEffect(() => {
+    axios.get("/api/movies/all").then((res) => {
+      if (res.data.success && res.data.movies.length > 0) {
+        setLatestMovie(res.data.movies[0]); // latest movie
+      }
+    });
+  }, []);
+
   return (
-    <div 
-      // Use an inline style to apply the imported image
-      style={{ backgroundImage: `url(${heroBg})` }}
-      className='flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36 bg-cover bg-center h-screen text-white relative'
-    >
-      {/* Marvel Studios Logo */}
-      <img 
-        src={assets.marvelLogo} 
-        alt="Marvel Studios" 
-        className="max-h-11 lg:h-11 mt-20" 
-      />
+    <div className="relative h-screen w-full overflow-hidden">
 
-      {/* Movie Title */}
-      <h1 className='text-5xl md:text-[70px] md:leading-18 font-semibold max-w-110'>
-        Guardians <br /> of the Galaxy
-      </h1>
+      {/* 🎬 FULL POSTER BACKGROUND */}
+      {latestMovie && (
+        <img
+          src={latestMovie.posterUrl}
+          alt={latestMovie.title}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
 
-      {/* Meta Information */}
-      <div className='flex items-center gap-4 text-gray-300 text-sm md:text-base'>
-        <span>Action | Adventure | Sci-Fi</span>
-        
-        <div className='flex items-center gap-1'>
-          <CalendarIcon className='w-4.5 h-4.5 text-gray-400' />
-          <span>2018</span>
+      {/* ⚠️ IMPORTANT: dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/70" />
+
+      {/* CONTENT */}
+      <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-16 lg:px-32 max-w-3xl gap-5">
+
+        {/* Rating */}
+        <div className="flex items-center gap-1">
+          {[...Array(5)].map((_, i) => (
+            <Star
+              key={i}
+              className="w-4 h-4 text-yellow-400 fill-yellow-400"
+            />
+          ))}
+          <span className="text-gray-300 text-sm ml-2">
+            {latestMovie?.rating || "8.5"}
+          </span>
         </div>
 
-        <div className='flex items-center gap-1'>
-          <ClockIcon className='w-4.5 h-4.5 text-gray-400' />
-          <span>2h 8m</span>
+        {/* Title */}
+        <h1 className="text-4xl md:text-6xl font-bold text-white">
+          {latestMovie?.title}
+        </h1>
+
+        {/* Year */}
+        <p className="text-gray-400 text-sm">
+          {latestMovie?.year}
+        </p>
+
+        {/* Description */}
+        <p className="text-gray-300 max-w-lg text-sm md:text-base">
+          {latestMovie?.overview || "Watch the latest blockbuster now!"}
+        </p>
+
+        {/* Buttons */}
+        <div className="flex gap-4 mt-2">
+          <button
+            onClick={() => navigate("/movies")}
+            className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-full text-white flex items-center gap-2"
+          >
+            Explore Movies
+            <ArrowRight size={16} />
+          </button>
+
+          <button
+            onClick={() => navigate("/movies")}
+            className="border border-white/30 px-6 py-3 rounded-full text-white"
+          >
+            Watch Trailer
+          </button>
         </div>
       </div>
-
-      <p className='max-w-xl text-gray-300 leading-relaxed text-sm md:text-base'>
-        In a post-apocalyptic world where cities ride on wheels and consume each other to survive, 
-        two people meet in London and try to stop a conspiracy.
-      </p>
-
-      <button onClick={()=>navigate('/movies')} className='flex items-center gap-2 bg-[#FF4D67] hover:bg-[#ff3653] text-white px-8 py-3 rounded-full font-medium transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-[#FF4D67]/20 mt-2'>
-        Explore Movies
-        <ArrowRight className='w-5 h-5' />
-      </button>
     </div>
   );
 };

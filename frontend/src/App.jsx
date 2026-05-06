@@ -17,6 +17,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import ListShows from "./pages/admin/ListShows";
 import ListBooking from "./pages/admin/ListBooking";
 import AddShows from "./pages/admin/AddShows";
+import AddMovie from "./pages/admin/AddMovies";
 const App = () => {
   // navbar display when not in admin route
   const isAdminRoute = useLocation().pathname.startsWith("/admin");
@@ -29,7 +30,7 @@ const App = () => {
         <Route path="/movies" element={<Movies />} />
         <Route path="/login" element={<Login />} />
         <Route path="/movies/:id" element={<MovieDetails />} />
-        <Route path="/movies/:id/:date" element={<SeatLayout />} />
+    <Route path="/seat-layout/:showId/:date/:time" element={<SeatLayout />} />
         <Route path="/my-booking" element={<MyBookings />} />
         <Route path="/favorite" element={<Favorites />} />
         <Route path="/email-verify" element={<EmailVerify />} />
@@ -38,6 +39,8 @@ const App = () => {
         <Route path="/admin" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="add-shows" element={<AddShows />} />
+          <Route path="add-movies" element={<AddMovie />} />
+
           <Route path="list-shows" element={<ListShows />} />
           {/* Ensure this path matches your Sidebar NavLink */}
           <Route path="list-bookings" element={<ListBooking />} />

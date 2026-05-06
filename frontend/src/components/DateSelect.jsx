@@ -1,83 +1,77 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import toast from 'react-hot-toast'; // Import toast
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-const DateSelect = ({ dateTime, id }) => {
+const DateSelect = ({ dateTime, showId }) => {
   const navigate = useNavigate();
 
-  // Guard: if no data, don’t render
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
+
   if (!dateTime || Object.keys(dateTime).length === 0) {
-    return null;
+    return <div className="text-gray-400 mt-10">No shows available</div>;
   }
 
-  // 1. Initialize with null so no date is pre-selected
-  const [selectedDate, setSelectedDate] = useState(null);
-
-  // 2. Handle the Book Now logic
   const onBookHandler = () => {
     if (!selectedDate) {
-      // Show toaster warning if no date is selected
-      return toast('Please select a date');
+      return toast.error("Please select a date");
     }
 
-    // Navigate to the next page (e.g., Seat Layout) with movie id and selected date
-    navigate(`/movies/${id}/${selectedDate}`);
-    window.scrollTo(0, 0);
+    if (!selectedTime) {
+      return toast.error("Please select a time");
+    }
+
+    if (!showId) {
+      return toast.error("Show not available");
+    }
+
+    navigate(`/seat-layout/${showId}/${selectedDate}/${selectedTime}`);
   };
 
   return (
-    <div id='booking-section' className='pt-10'>
-      <div className='flex flex-col md:flex-row items-center justify-between gap-8 p-10 bg-[#120b0e] border border-white/5 rounded-2xl'>
-        
-        {/* Left Section: Date Picker */}
-        <div className='flex flex-col gap-6 w-full md:w-auto'>
-          <p className='text-xl font-bold text-white'>Choose Date</p>
-          
-          <div className='flex items-center gap-4'>
-            <ChevronLeftIcon className='text-[#ff4d67] cursor-pointer hover:scale-110 transition-transform' strokeWidth={3} size={24} />
-            
-            <div className='flex items-center gap-3 overflow-x-auto no-scrollbar'>
-              {Object.keys(dateTime).map((date) => {
-                const d = new Date(date);
-                const isSelected = selectedDate === date;
+    <div className="mt-10">
 
-                return (
-                  <button 
-                    key={date}
-                    onClick={() => setSelectedDate(date)}
-                    className={`flex flex-col items-center justify-center min-w-[70px] h-[85px] rounded-lg cursor-pointer transition-all border ${
-                      isSelected
-                        ? 'bg-[#ff4d67] border-[#ff4d67] text-white'
-                        : 'bg-transparent border-white/10 text-gray-300 hover:border-white/30'
-                    }`}
-                  >
-                    <span className='text-xs font-medium'>
-                      {d.toLocaleDateString("en-US", { weekday: "short" })}
-                    </span>
-                    <span className='text-xl font-bold mt-1'>
-                      {d.getDate()}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <ChevronRightIcon className='text-[#ff4d67] cursor-pointer hover:scale-110 transition-transform' strokeWidth={3} size={24} />
-          </div>
-        </div>
-
-        {/* Right Section: Book Button */}
-        <div className='w-full md:w-64'>
-          <button 
-            onClick={onBookHandler}
-            className='w-full bg-[#ff4d67] text-white py-4 rounded-full font-bold text-sm hover:bg-[#ff3352] transition-colors shadow-lg active:scale-95'
+      {/* DATE */}
+      <div className="flex gap-3 mb-4">
+        {Object.keys(dateTime).map((date) => (
+          <button
+            key={date}
+            onClick={() => {
+              setSelectedDate(date);
+              setSelectedTime(null); // reset time
+            }}
+            className={`p-3 border ${
+              selectedDate === date ? "bg-red-500" : ""
+            }`}
           >
-            Book Now
+            {date}
           </button>
-        </div>
-
+        ))}
       </div>
+
+      {/* TIME (NEW) */}
+      {selectedDate && (
+        <div className="flex gap-3 mb-4">
+          {dateTime[selectedDate].map((t, i) => (
+            <button
+              key={i}
+              onClick={() => setSelectedTime(t)}
+              className={`p-2 border ${
+                selectedTime === t ? "bg-green-500" : ""
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <button
+        onClick={onBookHandler}
+        className="bg-red-500 px-6 py-2"
+      >
+        Book Now
+      </button>
     </div>
   );
 };
