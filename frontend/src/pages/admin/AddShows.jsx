@@ -54,7 +54,7 @@ const AddMovie = () => {
       };
 
       const res = await axios.post(
-        "http://localhost:7000/api/movies/add",
+        `${import.meta.env.VITE_BACKEND_URL}/api/movies/add`,
         payload,
         { withCredentials: true }
       );

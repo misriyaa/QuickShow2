@@ -14,7 +14,7 @@ const SeatLayout = () => {
   const fetchSeats = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:7000/api/shows/${showId}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/shows/${showId}`
       );
 
       if (res.data.success) {
@@ -46,7 +46,7 @@ const SeatLayout = () => {
   const handleBooking = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:7000/api/shows/book",
+        `${import.meta.env.VITE_BACKEND_URL}/api/shows/book`,
         { showId, date, time, seats: selectedSeats },
         { withCredentials: true }
       );

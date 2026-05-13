@@ -14,7 +14,7 @@ const AddShows = () => {
   // FETCH MOVIES
   const fetchMovies = async () => {
     try {
-      const res = await axios.get("http://localhost:7000/api/movies/all");
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movies/all`);
 
       if (res.data.success) {
         setMovies(res.data.movies);
@@ -56,7 +56,7 @@ const AddShows = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:7000/api/shows/add",
+        `${import.meta.env.VITE_BACKEND_URL}/api/shows/add`,
         {
           movie: selectedMovie._id,
           date,

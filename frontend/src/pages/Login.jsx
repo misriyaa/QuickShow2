@@ -1,9 +1,9 @@
-import { useState, useContext } from "react"; // Added useContext
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { AppContent } from "../context/AppContent"; // Import the Context object
-import { Eye, EyeOff, Truck, ArrowRight, User, Mail, Lock } from "lucide-react";
+import { AppContent } from "../context/AppContent";
+import { Eye, EyeOff, ArrowRight, User, Mail, Lock } from "lucide-react";
 
 export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -13,8 +13,15 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  // FIX: Use useContext with your AppContent instead of the undefined useAppContext
-  const { setIsLoggedin, getUserData, backendUrl } = useContext(AppContent);
+  const { setIsLoggedin, getUserData, backendUrl, isLoggedin, userData, isLoading } = useContext(AppContent); // ← added isLoading
+
+  // ← ADDED: wait for auth check to finish first
+  if (isLoading) return null;
+
+  // ← already logged in → redirect away
+  if (isLoggedin) {
+    return <Navigate to={userData?.isAdmin ? "/admin" : "/"} replace />;
+  }
 
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -24,7 +31,6 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // FIX: Ensure axios defaults are set for cookies
       axios.defaults.withCredentials = true;
 
       const endpoint = isSignUp ? "/api/auth/register" : "/api/auth/login";
@@ -32,16 +38,19 @@ export default function Login() {
         ? { name: form.name, email: form.email, password: form.password }
         : { email: form.email, password: form.password };
 
-      // FIX: Prefix the endpoint with your backendUrl from context
       const { data } = await axios.post(backendUrl + endpoint, payload);
 
       if (data.success) {
         toast.success(isSignUp ? "Account created! Welcome 🎉" : "Welcome back!");
         setIsLoggedin(true);
         await getUserData();
-        navigate("/"); // Redirect to Home or Dashboard
-      } else {
-        toast.error(data.message);
+
+        const me = await axios.get(backendUrl + "/api/user/data");
+        if (me.data.userData?.isAdmin) {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Something went wrong");
@@ -49,24 +58,23 @@ export default function Login() {
       setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Glow Effect */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full"></div>
-      
+
       <div className="w-full max-w-md z-10">
-        {/* Logo Section */}
         <div className="mb-10 flex flex-col items-center">
           <Link to="/" className="flex items-center gap-1 mb-2">
             <span className="text-primary text-4xl font-bold">Q</span>
-            <span className="text-white text-2xl font-semibold tracking-tight">uickShow</span>
+            <span className="text-white text-2xl font-semibold tracking-tight">
+              uickShow
+            </span>
           </Link>
           <p className="text-gray-500 text-sm">Elevate your cinema experience</p>
         </div>
 
-        {/* Form Container (Glassmorphism) */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl">
-          {/* Toggle Tab */}
           <div className="flex bg-black/40 rounded-2xl p-1 mb-8 border border-white/5">
             <button
               onClick={() => setIsSignUp(false)}
@@ -133,7 +141,9 @@ export default function Login() {
 
             {!isSignUp && (
               <div className="text-right">
-                <Link to="/reset-password" name="reset-password" className="text-xs text-primary hover:underline">Forgot Password?</Link>
+                <Link to="/reset-password" name="reset-password" className="text-xs text-primary hover:underline">
+                  Forgot Password?
+                </Link>
               </div>
             )}
 
@@ -142,7 +152,13 @@ export default function Login() {
               disabled={loading}
               className="w-full bg-primary hover:bg-[#ff3653] disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
-              {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <>{isSignUp ? "Create Account" : "Sign In"} <ArrowRight size={18} /></>}
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  {isSignUp ? "Create Account" : "Sign In"} <ArrowRight size={18} />
+                </>
+              )}
             </button>
           </form>
         </div>

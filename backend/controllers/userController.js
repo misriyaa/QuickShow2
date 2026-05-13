@@ -13,6 +13,7 @@ export const getUSerData = async (req, res) => {
         name: user.name,
         email: user.email,
         isAccountVerified: user.isAccountVerified,
+           isAdmin: user.isAdmin, 
       },
     });
   } catch (error) {

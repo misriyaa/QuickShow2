@@ -18,8 +18,8 @@ const MovieDetails = () => {
 
   const fetchData = async () => {
     try {
-      const movieRes = await axios.get("http://localhost:7000/api/movies/all");
-      const showRes = await axios.get("http://localhost:7000/api/shows/all");
+      const movieRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movies/all`);
+      const showRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/shows/all`);
 
       if (movieRes.data.success) {
         const found = movieRes.data.movies.find((m) => m._id === id);
@@ -97,7 +97,7 @@ if (movieShows.length > 0) {
         {/* Poster */}
         <div className="shrink-0 shadow-2xl shadow-red-900/20 w-full max-w-[320px] md:max-w-[380px]">
           <img
-            src={movie.posterUrl?.startsWith("http") ? movie.posterUrl : `http://localhost:7000${movie.posterUrl}`}
+            src={movie.posterUrl?.startsWith("http") ? movie.posterUrl : `${import.meta.env.VITE_BACKEND_URL}${movie.posterUrl}`}
             className="w-full h-auto object-cover rounded-3xl border border-white/10 shadow-2xl"
             alt={movie.title}
           />
@@ -163,7 +163,7 @@ if (movieShows.length > 0) {
             <div key={i} className="flex flex-col items-center min-w-[110px] group">
               <div className="h-24 w-24 rounded-full overflow-hidden border-2 border-transparent group-hover:border-[#ff4d6d] transition-all shadow-xl">
                 <img
-                  src={c.photoUrl?.startsWith("http") ? c.photoUrl : `http://localhost:7000${c.photoUrl}`}
+                  src={c.photoUrl?.startsWith("http") ? c.photoUrl : `${import.meta.env.VITE_BACKEND_URL}${c.photoUrl}`}
                   className="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                   alt={c.name}
                 />

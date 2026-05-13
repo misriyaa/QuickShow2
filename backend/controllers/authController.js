@@ -48,7 +48,7 @@ export const register = async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to: email,
       subject: "Welcome to autoAid",
-      text: `Welcome to autoAid . Your account has been created with email id: ${email}`,
+      text: `Welcome to QuickShow . Your account has been created with email id: ${email}`,
     };
     await transporter.sendMail(mailOptions);
 

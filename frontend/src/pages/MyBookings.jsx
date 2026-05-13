@@ -510,7 +510,7 @@ const MyBookings = () => {
 
   const getMyBookings = async () => {
     try {
-      const res = await axios.get("http://localhost:7000/api/bookings/my", { withCredentials: true });
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/bookings/my`, { withCredentials: true });
       if (res.data.success) setBookings(res.data.bookings);
     } catch (err) {
       console.log(err);
@@ -551,7 +551,7 @@ const MyBookings = () => {
                     src={
                       item.show.movie.posterUrl?.startsWith("http")
                         ? item.show.movie.posterUrl
-                        : `http://localhost:7000${item.show.movie.posterUrl}`
+                        : `${import.meta.env.VITE_BACKEND_URL}${item.show.movie.posterUrl}`
                     }
                     alt={item.show.movie.title}
                     className="w-full h-full object-cover"
