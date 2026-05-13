@@ -12,7 +12,7 @@ import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import movieRouter from "./routes/showMoviesRoute.js";
 import showRouter from "./routes/showRoutes.js";
-import bookingRouter from "./routes/BookingRoutes.js";
+import bookingRouter from "./routes/bookingRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
