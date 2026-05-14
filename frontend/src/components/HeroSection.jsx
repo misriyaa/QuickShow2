@@ -10,7 +10,7 @@ const HeroSection = () => {
   const intervalRef = useRef(null);
 
   useEffect(() => {
-    axios.get("/api/movies/all").then((res) => {
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movies/all`).then((res) => {
       if (res.data.success) setMovies(res.data.movies.slice(0, 6));
     });
   }, []);
