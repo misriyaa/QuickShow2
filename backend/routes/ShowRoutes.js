@@ -7,7 +7,6 @@ const router = express.Router();
 router.post("/add", addShow);
 router.get("/all", getShows);
 router.post("/book",userAuth ,bookSeats);
-// Add this to your router:
-router.get("/:showId", getShowById); // ← missing
+router.get("/:showId", getShowById); 
 
 export default router;
