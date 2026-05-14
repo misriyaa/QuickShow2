@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../library/axios";
 
 const TrailersSection = () => {
   const [movies, setMovies] = useState([]);
@@ -7,7 +7,7 @@ const TrailersSection = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movies/all`)
+   axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movies/all`)
     .then((res) => {
       if (res.data.success) {
         // Only keep movies that actually have a trailerUrl
