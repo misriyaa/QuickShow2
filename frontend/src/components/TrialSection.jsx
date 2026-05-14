@@ -7,7 +7,8 @@ const TrailersSection = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("/api/movies/all").then((res) => {
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/movies/all`)
+    .then((res) => {
       if (res.data.success) {
         // Only keep movies that actually have a trailerUrl
         const withTrailers = res.data.movies.filter((m) => m.trailerUrl);
@@ -58,16 +59,16 @@ const TrailersSection = () => {
 
       {/* Main Player */}
       <div className="relative mx-auto max-w-[960px] aspect-video bg-black rounded-xl overflow-hidden shadow-2xl">
-        <iframe
-          key={currentMovie._id} // remounts on movie change
-          width="100%"
-          height="100%"
-          src={toEmbedUrl(currentMovie.trailerUrl)}
-          title={`${currentMovie.title} Trailer`}
-          allow="autoplay; encrypted-media; fullscreen"
-          allowFullScreen
-          className="absolute inset-0 w-full h-full"
-        />
+       <iframe
+  key={currentMovie._id}
+  width="100%"
+  height="100%"
+  src={toEmbedUrl(currentMovie.trailerUrl)}
+  title={`${currentMovie.title} Trailer`}
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+  className="absolute inset-0 w-full h-full"
+/>
       </div>
 
       {/* Thumbnail Strip */}
