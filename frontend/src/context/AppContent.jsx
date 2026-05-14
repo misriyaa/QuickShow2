@@ -1,20 +1,15 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { meta } from "eslint-plugin-react-hooks";
 
 export const AppContent = createContext();
 
 export const AppContextProvider = (props) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  axios.defaults.withCredentials = true;
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Attach token to every request automatically
-  axios.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
+  const [isLoading, setIsLoading] = useState(true); // ← ADDED
 
   const getUserData = async () => {
     try {
@@ -30,21 +25,15 @@ export const AppContextProvider = (props) => {
 
   const getAuthState = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
       const { data } = await axios.post(backendUrl + "/api/auth/isAuth");
       if (data.success) {
         setIsLoggedin(true);
         await getUserData();
-      } else {
-        localStorage.removeItem("token");
       }
     } catch (error) {
-      localStorage.removeItem("token");
       setIsLoggedin(false);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // ← ADDED — always runs after check
     }
   };
 
@@ -57,7 +46,7 @@ export const AppContextProvider = (props) => {
     isLoggedin, setIsLoggedin,
     userData, setUserData,
     getUserData,
-    isLoading,
+    isLoading, // ← ADDED
   };
 
   return (
