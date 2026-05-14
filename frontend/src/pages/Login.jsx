@@ -27,37 +27,37 @@ export default function Login() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      axios.defaults.withCredentials = true;
+  try {
+    const endpoint = isSignUp ? "/api/auth/register" : "/api/auth/login";
+    const payload = isSignUp
+      ? { name: form.name, email: form.email, password: form.password }
+      : { email: form.email, password: form.password };
 
-      const endpoint = isSignUp ? "/api/auth/register" : "/api/auth/login";
-      const payload = isSignUp
-        ? { name: form.name, email: form.email, password: form.password }
-        : { email: form.email, password: form.password };
+    const { data } = await axios.post(backendUrl + endpoint, payload);
 
-      const { data } = await axios.post(backendUrl + endpoint, payload);
+    if (data.success) {
+      saveToken(data.token); // ← saves to localStorage + sets isLoggedin
+      await getUserData();
 
-      if (data.success) {
-        toast.success(isSignUp ? "Account created! Welcome 🎉" : "Welcome back!");
-        setIsLoggedin(true);
-        await getUserData();
-
-        const me = await axios.get(backendUrl + "/api/user/data");
-        if (me.data.userData?.isAdmin) {
-          navigate("/admin");
-        } else {
-          navigate("/");
-        }
+      const me = await axios.get(backendUrl + "/api/user/data");
+      if (me.data.userData?.isAdmin) {
+        navigate("/admin");
+      } else {
+        navigate("/");
       }
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+      toast.success(isSignUp ? "Account created! Welcome 🎉" : "Welcome back!");
+    } else {
+      toast.error(data.message || "Something went wrong"); // ← show backend error message
     }
-  };
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-6 relative overflow-hidden">
