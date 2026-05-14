@@ -13,12 +13,11 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  const { setIsLoggedin, getUserData, backendUrl, isLoggedin, userData, isLoading } = useContext(AppContent); // ← added isLoading
+  // ✅ saveToken added here
+  const { saveToken, getUserData, backendUrl, isLoggedin, userData, isLoading } = useContext(AppContent);
 
-  // ← ADDED: wait for auth check to finish first
   if (isLoading) return null;
 
-  // ← already logged in → redirect away
   if (isLoggedin) {
     return <Navigate to={userData?.isAdmin ? "/admin" : "/"} replace />;
   }
@@ -27,37 +26,37 @@ export default function Login() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const endpoint = isSignUp ? "/api/auth/register" : "/api/auth/login";
-    const payload = isSignUp
-      ? { name: form.name, email: form.email, password: form.password }
-      : { email: form.email, password: form.password };
+    try {
+      const endpoint = isSignUp ? "/api/auth/register" : "/api/auth/login";
+      const payload = isSignUp
+        ? { name: form.name, email: form.email, password: form.password }
+        : { email: form.email, password: form.password };
 
-    const { data } = await axios.post(backendUrl + endpoint, payload);
+      const { data } = await axios.post(backendUrl + endpoint, payload);
 
-    if (data.success) {
-      saveToken(data.token); // ← saves to localStorage + sets isLoggedin
-      await getUserData();
+      if (data.success) {
+        saveToken(data.token); // ✅ saves token to localStorage
+        await getUserData();
 
-      const me = await axios.get(backendUrl + "/api/user/data");
-      if (me.data.userData?.isAdmin) {
-        navigate("/admin");
+        const me = await axios.get(backendUrl + "/api/user/data");
+        if (me.data.userData?.isAdmin) {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
+        toast.success(isSignUp ? "Account created! Welcome 🎉" : "Welcome back!");
       } else {
-        navigate("/");
+        toast.error(data.message || "Something went wrong");
       }
-      toast.success(isSignUp ? "Account created! Welcome 🎉" : "Welcome back!");
-    } else {
-      toast.error(data.message || "Something went wrong"); // ← show backend error message
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Something went wrong");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-6 relative overflow-hidden">
@@ -141,7 +140,7 @@ export default function Login() {
 
             {!isSignUp && (
               <div className="text-right">
-                <Link to="/reset-password" name="reset-password" className="text-xs text-primary hover:underline">
+                <Link to="/reset-password" className="text-xs text-primary hover:underline">
                   Forgot Password?
                 </Link>
               </div>
