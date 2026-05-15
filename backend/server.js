@@ -28,11 +28,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://quick-show2-front.vercel.app"
+    "https://quick-show-frontend-bay.vercel.app"
   ],
   credentials: true,
 }));
-
 // Connect DB
 connectDB();
 
