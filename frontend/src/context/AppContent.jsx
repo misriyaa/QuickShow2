@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../library/axios"; // ✅ use this, interceptor already inside
 
 export const AppContent = createContext();
 
@@ -9,16 +9,11 @@ export const AppContextProvider = (props) => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Attach token to every request automatically
-  axios.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
+  // ❌ remove the axios.interceptors block — already handled in axios.js
 
   const getUserData = async () => {
     try {
-      const { data } = await axios.get(backendUrl + "/api/user/data");
+      const { data } = await axiosInstance.get("/api/user/data"); // ✅ no need to add backendUrl, baseURL is set
       if (data.success) {
         setUserData(data.userData);
         setIsLoggedin(true);
@@ -31,14 +26,13 @@ export const AppContextProvider = (props) => {
   const getAuthState = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return; // no token = not logged in, skip the request
-
-      const { data } = await axios.post(backendUrl + "/api/auth/isAuth");
+      if (!token) return;
+      const { data } = await axiosInstance.post("/api/auth/isAuth");
       if (data.success) {
         setIsLoggedin(true);
         await getUserData();
       } else {
-        localStorage.removeItem("token"); // token invalid, clear it
+        localStorage.removeItem("token");
       }
     } catch (error) {
       setIsLoggedin(false);
@@ -52,7 +46,6 @@ export const AppContextProvider = (props) => {
     getAuthState();
   }, []);
 
-  // Call this after a successful login/register API response
   const saveToken = (token) => {
     localStorage.setItem("token", token);
     setIsLoggedin(true);
@@ -70,8 +63,8 @@ export const AppContextProvider = (props) => {
     userData, setUserData,
     getUserData,
     isLoading,
-    saveToken,  // ← use this after login/register
-    logout,     // ← use this instead of calling the logout API
+    saveToken,
+    logout,
   };
 
   return (
