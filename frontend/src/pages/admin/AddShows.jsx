@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../library/axios";
 
 const AddMovie = () => {
   const initialState = {
@@ -53,11 +53,7 @@ const AddMovie = () => {
             : movie.genres,
       };
 
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/movies/add`,
-        payload,
-        { withCredentials: true }
-      );
+      const res = await axiosInstance.post("/api/movies/add", payload); // ✅ fixed
 
       if (res.data.success) {
         alert("Movie added");
@@ -99,7 +95,6 @@ const AddMovie = () => {
 
         <input name="posterUrl" placeholder="Poster URL" onChange={handleInput} value={movie.posterUrl} className={inputClass} />
 
-        {/* CAST */}
         <h3 className="text-lg font-semibold mt-4">Cast</h3>
 
         {movie.cast.map((c, i) => (

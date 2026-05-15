@@ -20,7 +20,6 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -32,10 +31,9 @@ app.use(cors({
   ],
   credentials: true,
 }));
-// Connect DB
+
 connectDB();
 
-// Routes
 app.get("/", (req, res) => {
   res.send("QuickShow server running ✅");
 });
@@ -49,13 +47,10 @@ app.use("/api/shows", showRouter);
 app.use("/api/bookings", bookingRouter);
 app.use("/api/dashboard", dashboardRoutes);
 
-// Local development only
+// ✅ Always listen — works on both localhost and Render
 const PORT = process.env.PORT || 7000;
-
-if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 export default app;

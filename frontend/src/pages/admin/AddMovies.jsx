@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../library/axios"; 
 import MovieCard from "../../components/MovieCard";
 
 const AddShows = () => {
@@ -55,15 +55,7 @@ const AddShows = () => {
     if (!price) return alert("Enter price");
 
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/shows/add`,
-        {
-          movie: selectedMovie._id,
-          date,
-          times,
-          showPrice: Number(price),
-        }
-      );
+      const res = await axiosInstance.post("/api/movies/add", payload);
 
       if (res.data.success) {
         alert("Show added successfully ✅");
