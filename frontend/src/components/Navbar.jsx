@@ -2,9 +2,9 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { assets } from "../assets/assets"; 
 import { MenuIcon, SearchIcon, XIcon, LogOut } from "lucide-react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "../context/AppContent";
+import axiosInstance from "../library/axios"; // ✅ replaced axios import
 
 const Navbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -12,31 +12,32 @@ const Navbar = () => {
   
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoggedin, userData, setIsLoggedin, setUserData, backendUrl } = useContext(AppContent);
+  const { isLoggedin, userData, setIsLoggedin, setUserData } = useContext(AppContent);
 
   const handleLogout = async () => {
     try {
-      const { data } = await axios.post(backendUrl + "/api/auth/logout");
-      if (data.success) {
-        setIsLoggedin(false);
-        setUserData(null);
-        toast.success("Logged out successfully");
-        navigate("/login");
-      }
+      await axiosInstance.post("/api/auth/logout"); // ✅ axiosInstance, no backendUrl needed
+      localStorage.removeItem("token");             // ✅ clear token
+      setIsLoggedin(false);
+      setUserData(null);
+      toast.success("Logged out successfully");
+      navigate("/login");
     } catch (error) {
-      toast.error("Logout failed");
+      // logout even if request fails
+      localStorage.removeItem("token");
+      setIsLoggedin(false);
+      setUserData(null);
+      navigate("/login");
     }
   };
 
   return (
     <div className='fixed top-0 left-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5 bg-transparent'>
       
-      {/* LOGO */}
       <Link to='/' className='max-md:flex-1'>
         <img src={assets.logo} alt="Logo" className='w-36 h-auto'/>
       </Link>
 
-      {/* CENTER NAVIGATION (Capsule Style) */}
       <div className={`max-md:absolute max-md:top-0 max-md:left-0 max-md:font-medium max-md:text-lg z-50 flex flex-col md:flex-row items-center max-md:justify-center gap-8 min-md:px-8 py-3 max-md:h-screen min-md:rounded-full backdrop-blur-md bg-black/70 md:bg-white/10 md:border border-gray-300/20 overflow-hidden transition-[width] duration-300 ${showMobileMenu ? 'max-md:w-full' : 'max-md:w-0'}`}>
         
         <XIcon 
@@ -50,7 +51,6 @@ const Navbar = () => {
         <Link onClick={() => setShowMobileMenu(false)} to='/favorite' className="text-white hover:text-primary transition-colors">Favorites</Link>
       </div>
 
-      {/* RIGHT SIDE ACTIONS */}
       <div className='flex items-center gap-8'>
         <SearchIcon className='max-md:hidden w-6 h-6 cursor-pointer text-white' />
         
@@ -79,7 +79,6 @@ const Navbar = () => {
           </Link>
         )}
 
-        {/* Mobile Toggle */}
         <MenuIcon 
           onClick={() => setShowMobileMenu(true)}
           className='md:hidden w-8 h-8 cursor-pointer text-white ml-4' 
