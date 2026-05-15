@@ -26,17 +26,10 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
-  origin: function (origin, callback) {
-    const allowed = [
-      "http://localhost:5173",
-      "https://your-actual-app.vercel.app"
-    ];
-    if (!origin || allowed.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: [
+    "http://localhost:5173",
+    "https://quick-show2-front.vercel.app"
+  ],
   credentials: true,
 }));
 
