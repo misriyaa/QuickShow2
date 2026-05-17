@@ -1,11 +1,11 @@
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://quickshow2-backend.onrender.com";
+
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
-  // ❌ removed withCredentials — not needed with header-based auth
+  baseURL: BASE_URL,
 });
 
-// ✅ auto-attach token to every request
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
