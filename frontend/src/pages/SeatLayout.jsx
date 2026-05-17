@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../library/axios";
 import toast from "react-hot-toast";
 
 const SeatLayout = () => {
@@ -13,9 +13,8 @@ const SeatLayout = () => {
   // FETCH OCCUPIED SEATS
   const fetchSeats = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/shows/${showId}`
-      );
+     const res = await axiosInstance.get(`/api/shows/${showId}`);
+
 
       if (res.data.success) {
         const key = `${date}_${time}`;
@@ -45,11 +44,9 @@ const SeatLayout = () => {
   // BOOK
   const handleBooking = async () => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/shows/book`,
-        { showId, date, time, seats: selectedSeats },
-        { withCredentials: true }
-      );
+      const res = await axiosInstance.post("/api/shows/book", {
+  showId, date, time, seats: selectedSeats,
+});
 
       if (res.data.success) {
         toast.success("Booked!");

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../library/axios";
 import Loading from "../components/Loading";
 import { dateFormat } from "../library/dateFormat";
 
@@ -508,17 +508,16 @@ const MyBookings = () => {
   const [ticketTarget, setTicketTarget] = useState(null);
   const [localPaidIds, setLocalPaidIds] = useState(new Set()); // track payments made this session
 
-  const getMyBookings = async () => {
-    try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/bookings/my`, { withCredentials: true });
-      if (res.data.success) setBookings(res.data.bookings);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+const getMyBookings = async () => {
+  try {
+    const res = await axiosInstance.get("/api/bookings/my");
+    if (res.data.success) setBookings(res.data.bookings);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    setIsLoading(false);
+  }
+};
   useEffect(() => { getMyBookings(); }, []);
 
   if (isLoading) return <Loading />;
