@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../library/axios";
 import {
   RefreshCwIcon,
   TicketIcon,
@@ -52,7 +52,7 @@ const ListBooking = () => {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("/api/bookings/all", { withCredentials: true });
+    const res = await axiosInstance.get("/api/bookings/all");
 
       if (res.data.success) {
         setBookings(res.data.bookings);

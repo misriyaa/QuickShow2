@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../library/axios";
 import {
   ChartLineIcon,
   CircleDollarSignIcon,
@@ -68,7 +68,7 @@ const Dashboard = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get("/api/dashboard/data", { withCredentials: true });
+    const res = await axiosInstance.get("/api/dashboard/data");
       if (res.data.success) {
         const d = res.data.dashboard;
         setData({
