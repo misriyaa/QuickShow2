@@ -23,24 +23,27 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  const getAuthState = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-      const { data } = await axiosInstance.post("/api/auth/isAuth");
-      if (data.success) {
-        setIsLoggedin(true);
-        await getUserData();
-      } else {
-        localStorage.removeItem("token");
-      }
-    } catch (error) {
-      setIsLoggedin(false);
-      localStorage.removeItem("token");
-    } finally {
-      setIsLoading(false);
+const getAuthState = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsLoading(false); // ✅ fix
+      return;
     }
-  };
+    const { data } = await axiosInstance.post("/api/auth/isAuth");
+    if (data.success) {
+      setIsLoggedin(true);
+      await getUserData();
+    } else {
+      localStorage.removeItem("token");
+    }
+  } catch (error) {
+    setIsLoggedin(false);
+    localStorage.removeItem("token");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     getAuthState();

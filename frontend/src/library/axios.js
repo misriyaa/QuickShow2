@@ -1,9 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://quickshow2-backend.onrender.com";
-
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL || "https://quickshow2-backend.onrender.com",
 });
 
 axiosInstance.interceptors.request.use((config) => {
